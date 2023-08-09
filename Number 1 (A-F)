@@ -1,0 +1,112 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class SamplingDistributionCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Step A: Input population values and compute mean and variance
+        System.out.print("Enter population values (comma-separated): ");
+        String valuesInput = scanner.nextLine();
+        double[] populationValues = Arrays.stream(valuesInput.split(","))
+                                          .mapToDouble(Double::parseDouble)
+                                          .toArray();
+        double populationMean = calculateMean(populationValues);
+        double populationVariance = calculateVariance(populationValues, populationMean);
+
+        // Step B: Input sample size
+        System.out.print("Enter sample size (n > 1): ");
+        int sampleSize = scanner.nextInt();
+
+        // Step C: Generate all possible samples and compute sample means
+        List<double[]> samples = generateSamples(populationValues, sampleSize);
+        double[] sampleMeans = calculateSampleMeans(samples);
+
+        // Step D: Compute probabilities for each sample mean
+        double[] probabilities = calculateProbabilities(sampleMeans, populationMean, populationVariance, sampleSize);
+
+        // Step E: Compute the mean of the sampling distribution of x̄
+        double samplingDistributionMean = calculateMean(sampleMeans);
+
+        // Step F: Compute the variance of the sampling distribution of x̄
+        double samplingDistributionVariance = populationVariance / sampleSize;
+
+        // Display results
+        System.out.println("\nSummary of Sampling Distribution of x̄:");
+        for (int i = 0; i < sampleMeans.length; i++) {
+            System.out.printf("x̄ = %.2f, Probability = %.4f\n", sampleMeans[i], probabilities[i]);
+        }
+
+        System.out.printf("\nE(x̄) = %.2f (Same as population mean in Step A)\n", samplingDistributionMean);
+        System.out.printf("Var(x̄) = %.2f (Should be σ^2/n = %.2f)\n", samplingDistributionVariance, populationVariance / sampleSize);
+    }
+
+    // Helper method to calculate the mean of an array of values
+    private static double calculateMean(double[] values) {
+        double sum = 0;
+        for (double value : values) {
+            sum += value;
+        }
+        return sum / values.length;
+    }
+
+    // Helper method to calculate the variance of an array of values
+    private static double calculateVariance(double[] values, double mean) {
+        double sumSquaredDiffs = 0;
+        for (double value : values) {
+            sumSquaredDiffs += Math.pow(value - mean, 2);
+        }
+        return sumSquaredDiffs / values.length;
+    }
+
+    // Helper method to generate all possible samples of a given size from population values
+    private static List<double[]> generateSamples(double[] populationValues, int sampleSize) {
+        List<double[]> samples = new ArrayList<>();
+        generateSamplesRecursive(populationValues, sampleSize, 0, new double[sampleSize], samples);
+        return samples;
+    }
+
+    private static void generateSamplesRecursive(double[] populationValues, int sampleSize, int currentIndex, double[] currentSample, List<double[]> samples) {
+        if (currentIndex == sampleSize) {
+            samples.add(currentSample.clone());
+            return;
+        }
+
+        for (double value : populationValues) {
+            currentSample[currentIndex] = value;
+            generateSamplesRecursive(populationValues, sampleSize, currentIndex + 1, currentSample, samples);
+        }
+    }
+
+    // Helper method to calculate sample means from a list of samples
+    private static double[] calculateSampleMeans(List<double[]> samples) {
+        double[] sampleMeans = new double[samples.size()];
+        for (int i = 0; i < samples.size(); i++) {
+            sampleMeans[i] = calculateMean(samples.get(i));
+        }
+        return sampleMeans;
+    }
+
+    // Helper method to calculate probabilities for each sample mean
+    private static double[] calculateProbabilities(double[] sampleMeans, double populationMean, double populationVariance, int sampleSize) {
+        double[] probabilities = new double[sampleMeans.length];
+        for (int i = 0; i < sampleMeans.length; i++) {
+            probabilities[i] = calculateSamplingDistributionProbability(sampleMeans[i], populationMean, populationVariance, sampleSize);
+        }
+        return probabilities;
+    }
+
+    // Helper method to calculate the probability of a sample mean in the sampling distribution
+    private static double calculateSamplingDistributionProbability(double sampleMean, double populationMean, double populationVariance, int sampleSize) {
+        double standardError = Math.sqrt(populationVariance / sampleSize);
+        double zScore = (sampleMean - populationMean) / standardError;
+        return calculateStandardNormalProbability(zScore);
+    }
+
+    // Helper method to calculate the probability of a z-score in the standard normal distribution
+    private static double calculateStandardNormalProbability(double zScore) {
+        return 0.5 * (1 + Math.erf(zScore / Math.sqrt(2)));
+    }
+}

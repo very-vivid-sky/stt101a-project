@@ -34,7 +34,7 @@ public class Statistics {
 		for (double d : input) {
 			res += Math.pow(d-mean, 2);
 		}
-		res /= input.size();
+		res /= (input.size());
 
 		return res;
 	}
@@ -49,13 +49,13 @@ public class Statistics {
 	}
 
 	/**
-	 * Calculates the standard error.
+	 * Calculates the standard error squared.
 	 * @param popVariance	population variance
 	 * @param size			sample size
 	 * @return				standard error
 	 */
-	public static double standardError(double popVariance, int size) {
-		return Math.sqrt(popVariance/size);
+	public static double standardErrorSq(double var, int size) {
+		return Math.sqrt(var/size);
 	}
 	
 	/**
@@ -74,6 +74,12 @@ public class Statistics {
 	}
 
 	public static void main(String args[]) {
-		System.out.println(Erf.erf(1.96));
+		ArrayList<Double> test = new ArrayList<>();
+		test.add(1.0);
+		test.add(2.0);
+		test.add(3.0);
+		test.add(4.0);
+		test.add(5.0);
+		System.out.println(var(test));
 	}
 }

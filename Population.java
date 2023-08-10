@@ -9,6 +9,8 @@ public class Population {
 	private double mean;
 	private double variance;
 	private double sampleDistributionMean;
+	private double sampleDistributionVar;
+	private int sampleSize;
 	
 	public Population() {
 		this(Input.getDoubleArray());
@@ -22,13 +24,17 @@ public class Population {
 	public double getMean() { return mean; }
 	public double getVar() { return variance; }
 	public double getSDMean() { return sampleDistributionMean; }
+	public double getSDVar() { return sampleDistributionVar; }
 	public int getSize() { return values.size(); }
+	public int getSampleSize() { return sampleSize; }
+	public ArrayList<Sample> getSamples() { return samples; }
 
 	public void createSamples() {
 		this.createSamples(Input.getBoundedInt(2, this.values.size()));
 	}
 
 	public void createSamples(int size) {
+		this.sampleSize = size;
 		int valSize = this.values.size();
 		// errors
 		if (size < 0 || size > valSize) {
@@ -53,7 +59,7 @@ public class Population {
 			for (int i : combinationCtr) {
 				currSample.add(this.values.get(i));
 			}
-			samples.add(new Sample(currSample));
+			samples.add(new Sample(currSample, variance));
 
 			// continue algorithm
 			// creates the next combination
@@ -85,13 +91,21 @@ public class Population {
 		}
 	}
 
-	public void computeDistributionMean() {
-		double res = 0;
+	public void computeDistributionMV() {
+		double dmean = 0;
+
 		for (Sample s : samples) {
-			res += s.getMean();
+			dmean += s.getMean();
 		}
-		res /= samples.size();
-		sampleDistributionMean = res;
+		dmean = dmean / samples.size();
+		this.sampleDistributionMean = dmean;
+
+		double dvar = 0;
+		for (Sample s : samples) {
+			dvar += (Math.pow(s.getMean()-mean, 2));
+		}
+		dvar /= samples.size();
+		this.sampleDistributionVar = dvar;
 	}
 
 	public static void main(String args[]) {

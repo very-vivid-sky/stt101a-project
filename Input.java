@@ -5,10 +5,14 @@ public class Input {
 	// static scanner
 	private static Scanner sc;
 
-	public static Scanner getScanner() {
+	private static void loadScanner() {
 		if (sc == null) {
 			Input.sc = new Scanner(System.in);
 		}
+	}
+
+	public static Scanner getScanner() {
+		loadScanner();
 		return sc;
 	}
 
@@ -18,6 +22,7 @@ public class Input {
 	 * @return		A string that can either be converted to a double or is "cancel" or "continue"
 	 */
 	public static String getDoubleInput() {
+		loadScanner();
 		String input = null;
 
 		// loop until valid value set to input
@@ -25,7 +30,7 @@ public class Input {
 			input = sc.nextLine();
 			try {
 				switch(input.toLowerCase()) {
-					case "cancel":
+					case "reset":
 					case "continue":
 						break;
 					default: // double conversion
@@ -47,7 +52,7 @@ public class Input {
 		do {
 			input = getDoubleInput();
 			switch(input) {
-				case "cancel":
+				case "reset":
 					// new array
 					res = new ArrayList<Double>();
 				case "continue":
@@ -61,12 +66,31 @@ public class Input {
 		return res;
 	}
 
+	public static int getBoundedInt(int lb, int ub) {
+		loadScanner();
+		int res = 0;
+		String input = null;
+
+		// loop inputs
+		do {
+			try {
+				input = sc.nextLine();
+				res = Integer.parseInt(input);
+				if (lb > res || res > ub) {
+					input = null;
+				}
+			} catch(Exception e) {
+				input = null;
+			}
+			
+		} while (input == null);
+
+		return res;
+	}
+
 	public static void main(String args[]) {
 		getScanner();
-		ArrayList<Double> res = getDoubleArray();
-		for (double d : res) {
-			System.out.println(d + " ");
-		}
+		getBoundedInt(1, 5);
 	}
 
 }

@@ -9,7 +9,7 @@ public class Driver {
 
 	public static void main(String args[]) {
 		// run in object
-		new Driver().oneSample();
+		new Driver().twoSample();
 	}
 
 	public void oneSample() {
@@ -75,5 +75,10 @@ public class Driver {
 		tp = new TwoPopulations(pop1, pop2);
 		tp.createCombinations();
 
+		// Step D: Enumerate all xb1-xb2 of each sample in Step C, then give the probabilities for each value of xb1-xb2
+		tp.computeSampleProbs();
+
+		// Step E: Show mean and variance
+		tp.computeDistributionMV();
 	}
 }

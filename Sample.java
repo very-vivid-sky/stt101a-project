@@ -11,7 +11,7 @@ public class Sample {
 		this.values = values;
 		this.mean = Statistics.mean(values);
 		this.variance = this.var(); // Statistics.var(values); //Statistics.standardErrorSq(popVar, values.size());
-		this.error = Statistics.standardErrorSq(popVar, values.size());
+		this.error = Statistics.standardError(popVar, values.size());
 	}
 
 	public void samplingDistributionProbability(double popMean, double popVar) {
@@ -22,7 +22,7 @@ public class Sample {
 	public double getMean() { return mean; }
 	public double getVar() { return variance; }
 	public double getProb() { return sampleProbability; }
-	public double getSize() { return values.size(); }
+	public int getSize() { return values.size(); }
 	public double getError() { return Math.sqrt(error); }
 
 	public double var() {

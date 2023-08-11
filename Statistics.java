@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import org.apache.commons.math3.special.Erf;
+import org.apache.commons.math3.distribution.TDistribution;
 
 /**
  * Generic statistics formulas
@@ -49,13 +50,16 @@ public class Statistics {
 	}
 
 	/**
-	 * Calculates the standard error squared.
+	 * Calculates the standard error.
 	 * @param popVariance	population variance
 	 * @param size			sample size
 	 * @return				standard error
 	 */
-	public static double standardErrorSq(double var, int size) {
+	public static double standardError(double var, int size) {
 		return Math.sqrt(var/size);
+	}
+	public static double standardErrorSq(double var, int size) {
+		return var/size;
 	}
 	
 	/**
@@ -67,6 +71,17 @@ public class Statistics {
 	 */
 	public static double zScore(double sampMean, double popMean, double error) {
 		return (sampMean-popMean)/error;
+	}
+
+	/**
+	 * Calculates p
+	 * @param t				t-score
+	 * @param dof			degrees of freedom
+	 * @return				p-value
+	 */
+	public static double tTest(double t, int dof) {
+		TDistribution dist = new TDistribution(dof);
+		return dist.cumulativeProbability(t);
 	}
 
 	public static double snp(double z) {
